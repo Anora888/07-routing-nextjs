@@ -3,7 +3,12 @@ import css from "./Footer.module.css";
 export default function Footer() {
   return (
     <footer className={css.footer}>
-      <p className={css.text}>© 2024 NoteHub</p>
+      <p>© 2026 NoteHub. All rights reserved.</p>
+      <p>Developer: Anora</p>
+      <p>
+        Contact us:{" "}
+        <a href="mailto:student@notehub.app">student@notehub.app</a>
+      </p>
     </footer>
   );
 }
