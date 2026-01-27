@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import NotePreviewClient from "@/components/NotePreview/NotePreview";
+import NotePreviewClient from "@/app/@modal/(.)notes/[id]/NotePreview";
 
 interface Props {
   params: { id: string };

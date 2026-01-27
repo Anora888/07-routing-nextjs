@@ -1,7 +1,7 @@
 "use client";
 
 import { Note } from "@/types/note";
-import NoteDetailsClient from "@/components/NoteDetails/NoteDetails.client";
+import NoteDetailsClient from "@/app/notes/NoteDetails.client";
 import css from "./NoteList.module.css";
 
 interface Props {
