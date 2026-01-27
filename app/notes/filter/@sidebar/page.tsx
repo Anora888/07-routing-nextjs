@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import styles from "@/styles/SidebarNotes.module.css";
+import styles from "./SidebarNotes.module.css";
 
 const tags = ["Work", "Personal", "Ideas"];
 
