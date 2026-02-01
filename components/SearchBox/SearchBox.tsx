@@ -7,7 +7,7 @@ interface Props {
   onChange: (value: string) => void;
 }
 
-export default function SearchBox({ value, onChange }: Props) {
+export default function Search({ value, onChange }: Props) {
   return (
     <input
       className={css.input}

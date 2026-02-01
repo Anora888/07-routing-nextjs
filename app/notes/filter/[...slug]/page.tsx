@@ -1,25 +1,34 @@
-import NoteList from "@/components/NoteList/NoteList";
-import { fetchNotes } from "@/lib/api";
-import { Note } from "@/types/note";
+import { notFound } from "next/navigation";
+import NotesPageClient from "./NotesPageClient";
+import type { NoteTag } from "@/types/note";
+import { TAGS } from "@/types/note";
 
-interface Props {
-  params: { slug?: string[] };
+
+interface NotesByCategoryParams {
+  slug: string[];
 }
 
-export default async function FilteredNotesPage({ params }: Props) {
-  const tag = params?.slug?.[0] || "all";
+const NotesByCategory = async ({
+  params,
+}: {
+  params: Promise<NotesByCategoryParams>;
+}) => {
+  const { slug } = await params;
+  const filter = slug[0];
 
-  let notes: Note[] = [];
-  try {
-    const data = await fetchNotes(1, "", tag);
-    notes = data.notes;
-  } catch (err) {
-    console.error("Error fetching notes:", err);
+  function isNoteTag(value: string): value is NoteTag {
+    return TAGS.includes(value as NoteTag);
   }
 
-  if (notes.length === 0) {
-    return <p>No notes found or an error occurred.</p>;
+  if (filter === "all") {
+    return <NotesPageClient />;
   }
 
-  return <NoteList notes={notes} />;
-}
+  if (isNoteTag(filter)) {
+    return <NotesPageClient tag={filter} />;
+  }
+
+  notFound();
+};
+
+export default NotesByCategory;

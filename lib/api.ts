@@ -1,44 +1,82 @@
-import type { Note } from "@/types/note";
-
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+import axios from "axios";
+import type { Note, NoteTag, CreateNoteParams } from "@/types/note";
 
 export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
 
+export interface FetchNotesParams {
+  page: number;
+  perPage: number;
+  search?: string;
+  tag?: NoteTag;
+  sortBy?: "created" | "updated";
+}
 
-export const fetchNotes = async (
-  page = 1,
-  search = "",
-  tag?: string
-): Promise<FetchNotesResponse> => {
-  const params = new URLSearchParams({ page: String(page) });
+function getAuthHeaders(): { Authorization: string } {
+  const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
-  if (search) params.append("search", search);
-  if (tag && tag !== "all") params.append("tag", tag);
-
-  const res = await fetch(
-    `${BASE_URL}/api/notes?${params.toString()}`,
-    { cache: "no-store" }
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch notes");
+  if (!token) {
+    throw new Error("NEXT_PUBLIC_NOTEHUB_TOKEN is not defined");
   }
 
-  return res.json();
-};
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+}
 
-export const fetchNoteById = async (id: string): Promise<Note> => {
-  const res = await fetch(`${BASE_URL}/api/notes/${id}`, {
-    cache: "no-store",
+const axiosInstance = axios.create({
+  baseURL: "https://notehub-public.goit.study/api",
+});
+
+// Fetch notes list — SSR + CSR
+export async function fetchNotes({
+  page,
+  perPage,
+  search,
+  tag,
+  sortBy = "created",
+}: FetchNotesParams): Promise<FetchNotesResponse> {
+  const params = {
+    page,
+    perPage,
+    ...(search && search.trim() ? { search: search.trim() } : {}),
+    ...(tag ? { tag } : {}),
+    ...(sortBy ? { sortBy } : {}),
+  };
+
+  const response = await axiosInstance.get<FetchNotesResponse>("/notes", {
+    params,
+    headers: getAuthHeaders(),
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch note");
-  }
+  return response.data;
+}
 
-  return res.json();
-};
+// Create note — CSR mutation
+export async function createNote(payload: CreateNoteParams): Promise<Note> {
+  const response = await axiosInstance.post<Note>("/notes", payload, {
+    headers: getAuthHeaders(),
+  });
+
+  return response.data;
+}
+
+// Delete note — MUST return deleted Note (mentor requirement)
+export async function deleteNote(id: string): Promise<Note> {
+  const response = await axiosInstance.delete<Note>(`/notes/${id}`, {
+    headers: getAuthHeaders(),
+  });
+
+  return response.data;
+}
+
+// Fetch note by ID — SSR + CSR
+export async function fetchNoteById(id: string): Promise<Note> {
+  const response = await axiosInstance.get<Note>(`/notes/${id}`, {
+    headers: getAuthHeaders(),
+  });
+
+  return response.data;
+}
