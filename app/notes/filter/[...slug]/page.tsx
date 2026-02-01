@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import NotesPageClient from "./NotesPageClient";
+import NotesPageClient from "./Notes.client";
 import type { NoteTag } from "@/types/note";
 import { TAGS } from "@/types/note";
 
