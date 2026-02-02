@@ -7,7 +7,7 @@ export default function Footer() {
       <p>Developer: Anora</p>
       <p>
         Contact us:{" "}
-        <a href="mailto:student@notehub.app">student@notehub.app</a>
+        <a href="mailto:anoramaomao@gmail.com">anoramaomao@gmail.com</a>
       </p>
     </footer>
   );
